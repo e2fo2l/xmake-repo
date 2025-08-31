@@ -27,8 +27,8 @@ package("dawn")
 
         -- Patch
         io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
-        io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[
-        set(BUILD_TESTING OFF)
+        io.replace("CMakeLists.txt", "enable_testing()", [[
+        enable_testing()
         find_package(absl CONFIG REQUIRED)
         find_package(SPIRV-Headers CONFIG REQUIRED)
         find_package(VulkanHeaders CONFIG REQUIRED)

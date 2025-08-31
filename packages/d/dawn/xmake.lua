@@ -17,7 +17,7 @@ package("dawn")
 
     on_load(function (package)
         if package:is_plat("linux", "bsd") then
-            package:add("deps", "libx11")
+            package:add("deps", "libx11", "libxcb")
         end
     end)
 

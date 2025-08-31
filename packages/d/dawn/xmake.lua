@@ -25,10 +25,10 @@ package("dawn")
         -- Patch
         io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[
         set(BUILD_TESTING OFF)
-        FindPackage(absl CONFIG REQUIRED)
-        FindPackage(SPIRV-Headers CONFIG REQUIRED)
-        FindPackage(SPIRV-Tools CONFIG REQUIRED)
-        FindPackage(Vulkan CONFIG REQUIRED)
+        find_package(absl CONFIG REQUIRED)
+        find_package(SPIRV-Headers CONFIG REQUIRED)
+        find_package(SPIRV-Tools CONFIG REQUIRED)
+        find_package(Vulkan CONFIG REQUIRED)
         ]], {plain = true})
 
         local configs = {

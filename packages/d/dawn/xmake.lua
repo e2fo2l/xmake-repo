@@ -28,7 +28,8 @@ package("dawn")
         find_package(absl CONFIG REQUIRED)
         find_package(SPIRV-Headers CONFIG REQUIRED)
         find_package(SPIRV-Tools CONFIG REQUIRED)
-        find_package(Vulkan CONFIG REQUIRED)
+        find_package(VulkanHeaders CONFIG REQUIRED)
+        find_package(VulkanUtilityLibraries CONFIG REQUIRED)
         ]], {plain = true})
 
         local configs = {

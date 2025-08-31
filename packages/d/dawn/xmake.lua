@@ -23,6 +23,7 @@ package("dawn")
 
     on_install(function (package)
         -- Patch
+        io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
         io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[
         set(BUILD_TESTING OFF)
         find_package(absl CONFIG REQUIRED)

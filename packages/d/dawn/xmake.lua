@@ -11,8 +11,8 @@ package("dawn")
   add_deps("cmake", "python", {kind = "binary"})
 
   on_load(function (package)
-    if package:is_plat("linux", "bsd") then
-      package:add("deps", "libx11")
+    if package:is_plat("linux") then
+      package:add("deps", "libx11", "libxrandr", "libxinerama", "libxcursor", "libxi")
     end
   end)
 

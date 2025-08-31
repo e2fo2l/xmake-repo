@@ -37,8 +37,14 @@ package("dawn")
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",
         -- Backend options
+        "-DDAWN_ENABLE_NULL=ON",
         "-DDAWN_ENABLE_VULKAN=ON",
-        "-DDAWN_ENABLE_OPENGL=OFF", -- TODO: Fix OpenGL backend (currently requires the script to download third parties)
+        "-DDAWN_ENABLE_DESKTOP_GL=OFF", -- TODO: Fix OpenGL backend (currently requires the script to download third parties)
+        "-DDAWN_ENABLE_OPENGLES=OFF",
+        "-DDAWN_ENABLE_D3D11=OFF",
+        "-DDAWN_ENABLE_D3D12=OFF",
+        "-DDAWN_ENABLE_METAL=OFF",
+        "-DDAWN_ENABLE_WEBGPU_ON_WEBGPU=OFF",
         -- Tools/tests build options
         "-DDAWN_FETCH_DEPENDENCIES=OFF",
         "-DDAWN_USE_GLFW=OFF",

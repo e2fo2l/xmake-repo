@@ -24,6 +24,17 @@ package("dawn")
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         os.vrun("python3 -m pip install jinja2")
 
+        -- Fix for TARGET_PDB_FILE error
+        os.mkdir(
+            "$(builddir)/src/dawn/pdb",
+            "$(builddir)/src/dawn/common/pdb",
+            "$(builddir)/src/dawn/native/pdb",
+            "$(builddir)/src/dawn/platform/pdb",
+            "$(builddir)/src/dawn/utils/pdb",
+            "$(builddir)/src/dawn/wire/pdb",
+            "$(builddir)/src/tint/pdb"
+        )
+
         -- Patch
         io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
         io.replace("CMakeLists.txt", "enable_testing()", [[

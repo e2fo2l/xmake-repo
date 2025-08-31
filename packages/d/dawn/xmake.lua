@@ -13,7 +13,7 @@ package("dawn")
     end
 
     add_deps("cmake", "python", {kind = "binary"})
-    add_deps("abseil", "spirv-headers", "spirv-tools", "vulkan-headers", "vulkan-utility-libraries")
+    add_deps("abseil", "spirv-headers", "vulkan-headers", "vulkan-utility-libraries")
 
     on_load(function (package)
         if package:is_plat("linux", "bsd") then
@@ -38,15 +38,22 @@ package("dawn")
         "-DDAWN_ENABLE_VULKAN=ON",
         "-DDAWN_FETCH_DEPENDENCIES=OFF",
         "-DDAWN_USE_GLFW=OFF",
+        "-DDAWN_USE_BUILD_DXC=OFF",
         "-DDAWN_BUILD_SAMPLES=OFF",
         "-DDAWN_BUILD_TESTS=OFF",
         "-DDAWN_BUILD_BENCHMARKS=OFF",
+        "-DDAWN_BUILD_PROTOBUF",
+        "-DDAWN_ENABLE_SPIRV_VALIDATION=OFF",
         "-DTINT_ENABLE_INSTALL=OFF",
         "-DTINT_BUILD_TESTS=OFF",
         "-DTINT_BUILD_BENCHMARKS=OFF",
         "-DTINT_BUILD_CMD_TOOLS=OFF",
         "-DTINT_BUILD_TINTD=OFF",
         "-DTINT_BUILD_PROTOBUF=OFF",
+        "-DTINT_BUILD_SPV_READER=OFF",
+        "-DTINT_BUILD_SPV_WRITER=OFF",
+        "-DTINT_BUILD_GLSL_WRITER=OFF",
+        "-DTINT_BUILD_GLSL_VALIDATOR=OFF",
         -- DAWN_BUILD_MONOLITHIC is required to generate install targets, but it is incompatible with BUILD_SHARED_LIBS
         "-DBUILD_SHARED_LIBS=OFF"
         }

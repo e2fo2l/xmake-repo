@@ -73,7 +73,10 @@ package("dawn")
 
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DDAWN_BUILD_MONOLITHIC_LIBRARY=" .. (package:config("shared") and "SHARED" or "STATIC"))
-        import("package.tools.cmake").install(package, configs)
+
+        local packagedeps = package:is_plat("linux", "bsd") and {"libx11", "libxcb"} or {}
+
+        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
     end)
 
     on_test(function (package)

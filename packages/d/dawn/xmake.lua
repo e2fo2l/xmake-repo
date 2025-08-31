@@ -4,7 +4,7 @@ package("dawn")
     set_license("BSD-3-Clause")
 
     add_urls("https://github.com/google/dawn/archive/refs/tags/$(version).tar.gz",
-             "https://github.com/google/dawn.git")
+             "https://github.com/google/dawn.git", {submodules = false})
 
     add_versions("v20250822.104650", "d907df9c5b14f0ee982fe3016aeddeab78e62e7c123ced64bd470e7cfa663433")
 
@@ -13,21 +13,38 @@ package("dawn")
     end
 
     add_deps("cmake", "python", {kind = "binary"})
+    add_deps("abseil", "spirv-headers", "spirv-tools", "vulkan-headers", "vulkan-utility-libraries")
 
     on_load(function (package)
-        if package:is_plat("linux") then
-        package:add("deps", "libx11", "libxrandr", "libxinerama", "libxcursor", "libxi")
+        if package:is_plat("linux", "bsd") then
+            package:add("deps", "libx11")
         end
     end)
 
     on_install(function (package)
+        -- Patch
+        io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[
+        set(BUILD_TESTING OFF)
+        FindPackage(absl CONFIG REQUIRED)
+        FindPackage(SPIRV-Headers CONFIG REQUIRED)
+        FindPackage(SPIRV-Tools CONFIG REQUIRED)
+        FindPackage(Vulkan CONFIG REQUIRED)
+        ]], {plain = true})
+
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",
-        "-DDAWN_FETCH_DEPENDENCIES=ON",
+        "-DDAWN_ENABLE_VULKAN=ON",
+        "-DDAWN_FETCH_DEPENDENCIES=OFF",
+        "-DDAWN_USE_GLFW=OFF",
         "-DDAWN_BUILD_SAMPLES=OFF",
         "-DDAWN_BUILD_TESTS=OFF",
+        "-DDAWN_BUILD_BENCHMARKS=OFF",
+        "-DTINT_ENABLE_INSTALL=OFF"
         "-DTINT_BUILD_TESTS=OFF",
+        "-DTINT_BUILD_BENCHMARKS=OFF"
         "-DTINT_BUILD_CMD_TOOLS=OFF",
+        "-DTINT_BUILD_TINTD=OFF",
+        "-DTINT_BUILD_PROTOBUF=OFF",
         -- DAWN_BUILD_MONOLITHIC is required to generate install targets, but it is incompatible with BUILD_SHARED_LIBS
         "-DBUILD_SHARED_LIBS=OFF"
         }

@@ -22,6 +22,9 @@ package("dawn")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
+        local python = package:is_plat("windows") and "python" or "python3"
+        os.vrun(python .. " -m pip install jinja2")
+
         -- Patch
         io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
         io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[

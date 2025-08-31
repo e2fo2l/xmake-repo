@@ -21,7 +21,7 @@ package("dawn")
         end
     end)
 
-    on_install(function (package)
+    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
         -- Patch
         io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
         io.replace("third_party/CMakeLists.txt", "set(BUILD_TESTING OFF)", [[

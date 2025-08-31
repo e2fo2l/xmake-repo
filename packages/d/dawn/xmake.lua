@@ -22,8 +22,7 @@ package("dawn")
     end)
 
     on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
-        local python = package:is_plat("windows") and "python" or "python3"
-        os.vrun(python .. " -m pip install jinja2")
+        os.vrun("python3 -m pip install jinja2")
 
         -- Patch
         io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
@@ -37,7 +36,10 @@ package("dawn")
 
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",
+        -- Backend options
         "-DDAWN_ENABLE_VULKAN=ON",
+        "-DDAWN_ENABLE_OPENGL=OFF", -- TODO: Fix OpenGL backend (currently requires the script to download third parties)
+        -- Tools/tests build options
         "-DDAWN_FETCH_DEPENDENCIES=OFF",
         "-DDAWN_USE_GLFW=OFF",
         "-DDAWN_USE_BUILD_DXC=OFF",

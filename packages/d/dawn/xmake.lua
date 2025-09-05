@@ -13,7 +13,6 @@ package("dawn")
     end
 
     add_deps("cmake", "python", {kind = "binary"})
-    add_deps("abseil", "spirv-headers", "vulkan-headers", "vulkan-utility-libraries")
 
     on_load(function (package)
         if package:is_plat("linux", "bsd") then
@@ -49,7 +48,7 @@ package("dawn")
         "-DDAWN_ENABLE_METAL=OFF",
         "-DDAWN_ENABLE_WEBGPU_ON_WEBGPU=OFF",
         -- Tools/tests build options
-        "-DDAWN_FETCH_DEPENDENCIES=OFF",
+        "-DDAWN_FETCH_DEPENDENCIES=ON",
         "-DDAWN_USE_GLFW=OFF",
         "-DDAWN_USE_BUILD_DXC=OFF",
         "-DDAWN_BUILD_SAMPLES=OFF",

@@ -26,15 +26,15 @@ package("dawn")
         -- Fix for TARGET_PDB_FILE error
         io.replace("src/cmake/DawnLibrary.cmake", "if (MSVC)", "if (MSVC AND BUILD_SHARED_LIBS)", {plain = true})
 
-        -- Patch
-        io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
-        io.replace("CMakeLists.txt", "enable_testing()", [[
-        enable_testing()
-        find_package(absl CONFIG REQUIRED)
-        find_package(SPIRV-Headers CONFIG REQUIRED)
-        find_package(VulkanHeaders CONFIG REQUIRED)
-        find_package(VulkanUtilityLibraries CONFIG REQUIRED)
-        ]], {plain = true})
+        -- -- Patch
+        -- io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
+        -- io.replace("CMakeLists.txt", "enable_testing()", [[
+        -- enable_testing()
+        -- find_package(absl CONFIG REQUIRED)
+        -- find_package(SPIRV-Headers CONFIG REQUIRED)
+        -- find_package(VulkanHeaders CONFIG REQUIRED)
+        -- find_package(VulkanUtilityLibraries CONFIG REQUIRED)
+        -- ]], {plain = true})
 
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",

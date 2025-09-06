@@ -6,7 +6,7 @@ package("dawn")
     add_urls("https://github.com/google/dawn/archive/refs/tags/$(version).tar.gz",
              "https://github.com/google/dawn.git", {submodules = false})
 
-    add_versions("v20250822.104650", "d907df9c5b14f0ee982fe3016aeddeab78e62e7c123ced64bd470e7cfa663433")
+    add_versions("v20250905.222951", "1f56c56a92dacc47a7bd624c97eef63cf1b5dda62c386623d0ee25f134c29894")
 
     add_configs("vulkan", {description = "Enable Vulkan backend", default = is_plat("linux", "bsd", "android"), type = "boolean", readonly = true})
     add_configs("opengl", {description = "Enable OpenGL backend", default = is_plat("linux", "bsd"), type = "boolean", readonly = true})
@@ -51,27 +51,38 @@ package("dawn")
 
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",
+        "-DDAWN_FETCH_DEPENDENCIES=ON",
         -- Backend options
         "-DDAWN_ENABLE_NULL=ON",
         -- Tools/tests build options
-        "-DDAWN_FETCH_DEPENDENCIES=ON",
-        "-DDAWN_USE_GLFW=OFF",
-        "-DDAWN_USE_BUILD_DXC=OFF",
+        "-DDAWN_ENABLE_SPIRV_VALIDATION=OFF",
+        "-DDAWN_FORCE_SYSTEM_COMPONENT_LOAD=OFF",
+        "-DDAWN_ALWAYS_ASSERT=OFF",
+        "-DDAWN_USE_BUILT_DXC=OFF",
+        "-DDAWN_DXC_ENABLE_ASSERTS_IN_NDEBUG=OFF",
         "-DDAWN_BUILD_SAMPLES=OFF",
         "-DDAWN_BUILD_TESTS=OFF",
+        "-DDAWN_BUILD_NODE_BINDINGS=OFF",
+        "-DDAWN_ENABLE_SWIFTSHADER=OFF",
         "-DDAWN_BUILD_BENCHMARKS=OFF",
         "-DDAWN_BUILD_PROTOBUF=OFF",
-        "-DDAWN_ENABLE_SPIRV_VALIDATION=OFF",
         "-DTINT_ENABLE_INSTALL=OFF",
-        "-DTINT_BUILD_TESTS=OFF",
-        "-DTINT_BUILD_BENCHMARKS=OFF",
         "-DTINT_BUILD_CMD_TOOLS=OFF",
-        "-DTINT_BUILD_TINTD=OFF",
-        "-DTINT_BUILD_PROTOBUF=OFF",
         "-DTINT_BUILD_SPV_READER=OFF",
-        "-DTINT_BUILD_SPV_WRITER=OFF",
+        "-DTINT_BUILD_WGSL_READER=OFF",
         "-DTINT_BUILD_GLSL_WRITER=OFF",
         "-DTINT_BUILD_GLSL_VALIDATOR=OFF",
+        "-DTINT_BUILD_HLSL_WRITER=OFF",
+        "-DTINT_BUILD_MSL_WRITER=OFF",
+        "-DTINT_BUILD_SPV_WRITER=OFF",
+        "-DTINT_BUILD_WGSL_WRITER=OFF",
+        "-DTINT_BUILD_IR_BINARY=OFF",
+        "-DTINT_BUILD_FUZZERS=OFF",
+        "-DTINT_BUILD_BENCHMARKS=OFF",
+        "-DTINT_BUILD_TESTS=OFF",
+        "-DTINT_BUILD_AS_OTHER_OS=OFF",
+        "-DTINT_BUILD_TINTD=OFF",
+        "-DTINT_ENABLE_IR_VALIDATION=OFF"
         -- DAWN_BUILD_MONOLITHIC is required to generate install targets, but it is incompatible with BUILD_SHARED_LIBS
         "-DBUILD_SHARED_LIBS=OFF"
         }

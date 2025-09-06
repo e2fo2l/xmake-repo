@@ -82,7 +82,7 @@ package("dawn")
         "-DTINT_BUILD_TESTS=OFF",
         "-DTINT_BUILD_AS_OTHER_OS=OFF",
         "-DTINT_BUILD_TINTD=OFF",
-        "-DTINT_ENABLE_IR_VALIDATION=OFF"
+        "-DTINT_ENABLE_IR_VALIDATION=OFF",
         -- DAWN_BUILD_MONOLITHIC is required to generate install targets, but it is incompatible with BUILD_SHARED_LIBS
         "-DBUILD_SHARED_LIBS=OFF"
         }

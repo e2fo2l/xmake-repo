@@ -25,7 +25,7 @@ package("dawn")
 
     on_load(function (package)
         if package:is_plat("linux", "bsd") then
-            package:add("deps", "libx11", "libxcb")
+            package:add("deps", "libx11", "libxcb", "libxrandr")
         end
 
         if package:config("vulkan") then

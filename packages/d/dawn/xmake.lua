@@ -8,45 +8,51 @@ package("dawn")
 
     add_versions("v20250822.104650", "d907df9c5b14f0ee982fe3016aeddeab78e62e7c123ced64bd470e7cfa663433")
 
+    add_configs("vulkan", {description = "Enable Vulkan backend", default = is_plat("linux", "bsd", "android"), type = "boolean", readonly = true})
+    add_configs("opengl", {description = "Enable OpenGL backend", default = is_plat("linux", "bsd"), type = "boolean", readonly = true})
+    add_configs("opengles", {description = "Enable OpenGL ES backend", default = is_plat("linux", "bsd", "android"), type = "boolean", readonly = true})
+    add_configs("d3d11", {description = "Enable Direct3D 11 backend", default = is_plat("windows"), type = "boolean", readonly = true})
+    add_configs("d3d12", {description = "Enable Direct3D 12 backend", default = is_plat("windows"), type = "boolean", readonly = true})
+    add_configs("metal", {description = "Enable Metal backend", default = is_plat("macos", "iphoneos"), type = "boolean", readonly = true})
+    add_configs("webgpu", {description = "Enable WebGPU backend", default = is_plat("wasm"), type = "boolean", readonly = true})
+
     if is_host("windows") then
         set_policy("platform.longpaths", true)
     end
 
     add_deps("cmake", "python", {kind = "binary"})
+    add_deps("abseil")
 
     on_load(function (package)
         if package:is_plat("linux", "bsd") then
             package:add("deps", "libx11", "libxcb")
         end
+
+        if package:config("vulkan") then
+            package:add("deps", "vulkan-headers")
+        end
+        if package:config("opengl") or package:config("opengles") then
+            package:add("deps", "opengl", "opengl-headers")
+        end
     end)
 
-    on_install("windows", "linux", "macosx", "bsd", "mingw", "msys", "cross", function (package)
-        os.vrun("python3 -m pip install jinja2")
+    on_install(function (package)
+        -- os.vrun("python3 -m pip install jinja2")
 
         -- Fix for TARGET_PDB_FILE error
         io.replace("src/cmake/DawnLibrary.cmake", "if (MSVC)", "if (MSVC AND BUILD_SHARED_LIBS)", {plain = true})
 
-        -- -- Patch
-        -- io.replace("third_party/CMakeLists.txt", "SPIRV-Headers", "SPIRV-Headers::SPIRV-Headers", {plain = true})
-        -- io.replace("CMakeLists.txt", "enable_testing()", [[
-        -- enable_testing()
-        -- find_package(absl CONFIG REQUIRED)
-        -- find_package(SPIRV-Headers CONFIG REQUIRED)
-        -- find_package(VulkanHeaders CONFIG REQUIRED)
-        -- find_package(VulkanUtilityLibraries CONFIG REQUIRED)
-        -- ]], {plain = true})
+        -- Patch
+        local find_packages = "\nfind_package(absl CONFIG REQUIRED)"
+        if package:config("vulkan") then
+            find_packages = find_packages .. "\nfind_package(VulkanHeaders CONFIG REQUIRED)"
+        end
+        io.replace("CMakeLists.txt", "enable_testing()", "enable_testing()" .. find_packages, {plain = true})
 
         local configs = {
         "-DDAWN_ENABLE_INSTALL=ON",
         -- Backend options
         "-DDAWN_ENABLE_NULL=ON",
-        "-DDAWN_ENABLE_VULKAN=ON",
-        "-DDAWN_ENABLE_DESKTOP_GL=OFF", -- TODO: Fix OpenGL backend (currently requires the script to download third parties)
-        "-DDAWN_ENABLE_OPENGLES=OFF",
-        "-DDAWN_ENABLE_D3D11=OFF",
-        "-DDAWN_ENABLE_D3D12=OFF",
-        "-DDAWN_ENABLE_METAL=OFF",
-        "-DDAWN_ENABLE_WEBGPU_ON_WEBGPU=OFF",
         -- Tools/tests build options
         "-DDAWN_FETCH_DEPENDENCIES=ON",
         "-DDAWN_USE_GLFW=OFF",
@@ -73,9 +79,16 @@ package("dawn")
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DDAWN_BUILD_MONOLITHIC_LIBRARY=" .. (package:config("shared") and "SHARED" or "STATIC"))
 
-        local packagedeps = package:is_plat("linux", "bsd") and {"libx11", "libxcb"} or {}
+        -- Backends
+        table.insert(configs, "-DDAWN_ENABLE_VULKAN=" .. (package:config("vulkan") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_DESKTOP_GL=" .. (package:config("opengl") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_OPENGLES=" .. (package:config("opengles") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_D3D11=" .. (package:config("d3d11") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_D3D12=" .. (package:config("d3d12") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_METAL=" .. (package:config("metal") and "ON" or "OFF"))
+        table.insert(configs, "-DDAWN_ENABLE_WEBGPU_ON_WEBGPU=" .. (package:config("webgpu") and "ON" or "OFF"))
 
-        import("package.tools.cmake").install(package, configs, {packagedeps = packagedeps})
+        import("package.tools.cmake").install(package, configs)
     end)
 
     on_test(function (package)

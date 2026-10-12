@@ -21,7 +21,7 @@ package("slang")
     add_configs("slangd", { description = "Enable language server target", default = false, type = "boolean" })
     add_configs("slangc", { description = "Enable standalone compiler target", default = true, type = "boolean" })
     add_configs("slangrt", { description = "Enable runtime target", default = false, type = "boolean" })
-    add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = false, type = "boolean" })
+    add_configs("slang_glslang", { description = "Enable glslang dependency and slang-glslang wrapper target", default = true, type = "boolean" })
     add_configs("slang_llvm_flavor", { description = "How to get or build slang-llvm (available options: FETCH_BINARY, USE_SYSTEM_LLVM, DISABLE)", default = "DISABLE", type = "string" })
 
     add_deps("cmake")
@@ -86,6 +86,16 @@ include_directories(MINIZ_INCLUDE_DIRS)]], {plain = true})
     end)
 
     on_test(function (package)
+        -- TEMPORARY: slangc dlopens slang-glslang with the platform's usual suffix.
+        if package:config("slang_glslang") then
+            local module
+            if package:is_plat("windows") then
+                module = path.join(package:installdir("bin"), "slang-glslang.dll")
+            else
+                module = path.join(package:installdir("lib"), "libslang-glslang-*" .. (package:is_plat("macosx") and ".dylib" or ".so"))
+            end
+            assert(#os.files(module) > 0, "slang-glslang not found as " .. module)
+        end
         assert(package:check_cxxsnippets({ test = [[
             #include <slang-com-ptr.h>
             #include <slang.h>

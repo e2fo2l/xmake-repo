@@ -28,7 +28,10 @@ package("slang")
     add_deps("miniz")
 
     on_load(function (package)
-        if not package:config("shared") then
+        if package:config("shared") then
+            -- the slang-glslang and slang-glsl-module modules in lib/ are loaded at runtime, not linked
+            package:add("links", "slang-compiler", "slang")
+        else
             package:add("defines", "SLANG_STATIC")
             package:add("links", "slang-compiler", "compiler-core", "core", "cmark-gfm", "lz4")
             if package:is_plat("windows") then

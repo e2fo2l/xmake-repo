@@ -93,8 +93,18 @@ package("dawn")
     end)
 
     on_install("windows|x64", "windows|arm64", "linux", "macosx", "android", "iphoneos", function (package)
-        local function srcdir(name)
-            return os.dirs(path.join(package:resourcedir(name), "*"))[1]
+        -- the pinned sources go where Dawn expects its git submodules: their resource paths are too long
+        -- for MSVC on Windows
+        local resources = {
+            jinja2 = {"src/jinja2", "third_party/jinja2"},
+            markupsafe = {"src/markupsafe", "third_party/markupsafe"},
+            spirv_headers = {".", "third_party/spirv-headers/src"},
+            spirv_tools = {".", "third_party/spirv-tools/src"},
+            webgpu_headers = {".", "third_party/webgpu-headers/src"},
+        }
+        for name, dirs in pairs(resources) do
+            local resourcedir = os.dirs(path.join(package:resourcedir(name), "*"))[1]
+            os.cp(path.join(resourcedir, dirs[1], "*"), dirs[2] .. "/")
         end
 
         -- abseil and the Vulkan headers come from their packages: Dawn only builds its own copies when
@@ -140,11 +150,6 @@ package("dawn")
             "-DTINT_BUILD_CMD_TOOLS=OFF",
             "-DTINT_ENABLE_INSTALL=OFF",
             "-DBUILD_SHARED_LIBS=OFF",
-            "-DDAWN_JINJA2_DIR=" .. path.join(srcdir("jinja2"), "src", "jinja2"),
-            "-DDAWN_MARKUPSAFE_DIR=" .. path.join(srcdir("markupsafe"), "src", "markupsafe"),
-            "-DDAWN_SPIRV_HEADERS_DIR=" .. srcdir("spirv_headers"),
-            "-DDAWN_SPIRV_TOOLS_DIR=" .. srcdir("spirv_tools"),
-            "-DDAWN_WEBGPU_HEADERS_DIR=" .. srcdir("webgpu_headers"),
         }
         table.insert(configs, "-DCMAKE_BUILD_TYPE=" .. (package:is_debug() and "Debug" or "Release"))
         table.insert(configs, "-DDAWN_BUILD_MONOLITHIC_LIBRARY=" .. (package:config("shared") and "SHARED" or "STATIC"))
@@ -187,4 +192,13 @@ package("dawn")
                 wgpu::Instance instance = wgpu::CreateInstance(&descriptor);
             }
         ]]}, {configs = {languages = "c++20"}}))
+        if not package:is_plat("wasm") then
+            assert(package:check_cxxsnippets({test = [[
+                #include <dawn/native/DawnNative.h>
+                void test() {
+                    const DawnProcTable& procs = dawn::native::GetProcs();
+                    (void)procs;
+                }
+            ]]}, {configs = {languages = "c++20"}}))
+        end
     end)

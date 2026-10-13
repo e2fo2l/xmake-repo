@@ -96,17 +96,18 @@ package("dawn")
 
     on_install("windows|x64", "windows|arm64", "linux", "macosx", "android", "iphoneos", function (package)
         -- the pinned sources go where Dawn expects its git submodules: their resource paths are too long
-        -- for MSVC on Windows
+        -- for Windows, so they are moved (renaming a folder doesn't touch the long paths inside it)
         local resources = {
             jinja2 = {"src/jinja2", "third_party/jinja2"},
             markupsafe = {"src/markupsafe", "third_party/markupsafe"},
-            spirv_headers = {".", "third_party/spirv-headers/src"},
-            spirv_tools = {".", "third_party/spirv-tools/src"},
-            webgpu_headers = {".", "third_party/webgpu-headers/src"},
+            spirv_headers = {nil, "third_party/spirv-headers/src"},
+            spirv_tools = {nil, "third_party/spirv-tools/src"},
+            webgpu_headers = {nil, "third_party/webgpu-headers/src"},
         }
         for name, dirs in pairs(resources) do
             local resourcedir = os.dirs(path.join(package:resourcedir(name), "*"))[1]
-            os.cp(path.join(resourcedir, dirs[1], "*"), dirs[2] .. "/")
+            os.rm(dirs[2])
+            os.mv(dirs[1] and path.join(resourcedir, dirs[1]) or resourcedir, dirs[2])
         end
 
         -- abseil and the Vulkan headers come from their packages: Dawn only builds its own copies when

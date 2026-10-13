@@ -36,6 +36,19 @@ package("dawn")
         set_policy("platform.longpaths", true)
     end
 
+    if on_check then
+        on_check("windows", "linux", "macosx", "android", "iphoneos", function (package)
+            -- Tint relies on class template argument deduction for aggregates (clang >= 17, Xcode >= 16)
+            assert(package:check_cxxsnippets({test = [[
+                template <class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+                void test() {
+                    auto f = overloaded{[](int) {}, [](float) {}};
+                    f(1);
+                }
+            ]]}, {configs = {languages = "c++20"}}), "package(dawn): requires a C++20 compiler with aggregate deduction (e.g. clang >= 17, Xcode >= 16)")
+        end)
+    end
+
     on_load(function (package)
         if package:is_plat("wasm") then
             local port = "--use-port=" .. path.join(package:installdir(), "emdawnwebgpu.port.py")

@@ -76,7 +76,10 @@ package("dawn")
         end
         if not package:config("shared") then
             if package:is_plat("windows") then
-                package:add("syslinks", "user32", "dxguid")
+                package:add("syslinks", "user32", "onecore_apiset")
+                if package:config("d3d11") or package:config("d3d12") then
+                    package:add("syslinks", "dxguid")
+                end
             elseif package:is_plat("linux") then
                 package:add("syslinks", "dl", "pthread")
             elseif package:is_plat("android") then

@@ -14,7 +14,9 @@ package("dawn")
 
         add_versions("20261009.190412", "cdec5661e0650646051aa62f6aafb4d08122252ed5e5baadc36ece2a48dcc2b2")
 
-        -- sources Dawn needs at the commits pinned in its DEPS file
+        -- sources Dawn needs at the commits pinned in its DEPS file: when adding a version, take the commits of
+        -- third_party/spirv-headers/src, spirv-tools/src and webgpu-headers/src from that release's DEPS (the
+        -- OpenGL-Registry/src commit for gl.xml); any recent jinja2 and markupsafe release works
         add_resources("20261009.190412", "jinja2", "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", "0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d")
         add_resources("20261009.190412", "markupsafe", "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz", "2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6")
         add_resources("20261009.190412", "spirv_headers", "https://github.com/KhronosGroup/SPIRV-Headers/archive/86f980c731e62ae4eaf383d320449d71687936bf.tar.gz", "d11ef011d0788ed002d7cc96224d298f43b126cabe887cd4d46199cb19ecf386")

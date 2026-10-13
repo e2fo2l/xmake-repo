@@ -5,6 +5,7 @@ package("dawn")
 
     if is_plat("wasm") then
         -- emdawnwebgpu, Dawn's webgpu.h for Emscripten, is an Emscripten port that emcc builds itself
+        set_kind("library", {headeronly = true})
         add_urls("https://github.com/google/dawn/releases/download/v$(version)/emdawnwebgpu_pkg-v$(version).zip")
 
         add_versions("20261009.190412", "639b1551ffc98ea81f748bfcf311fb3c416464408b4fc1de818c5fae6240786d")
